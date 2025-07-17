@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Arbify • Kockázatmentes fogadás</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      background: linear-gradient(120deg, #131a24 0%, #182a3a 100%);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .preloader {
+      position: fixed;
+      z-index: 99999;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(120deg, #131a24 0%, #182a3a 100%);
+      transition: opacity 0.7s cubic-bezier(.9,0,.1,1), visibility 0.65s;
+      opacity: 1;
+      visibility: visible;
+    }
+    .preloader.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .preloader-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 60px;
+      border-radius: 24px;
+      background: rgba(32,255,181,0.14);
+      box-shadow: 0 6px 32px 0 rgba(32,255,181,0.13);
+      border: 1.2px solid rgba(60,255,200,0.13);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      font-size: 2.1rem;
+      font-weight: 600;
+      color: #38ffb0;
+      letter-spacing: 0.07em;
+      text-shadow: 0 2px 12px #20ffb54b;
+      animation: pulse 1.2s infinite alternate;
+      position: relative;
+      overflow: visible;
+    }
+    @keyframes pulse {
+      from { box-shadow: 0 4px 20px 0 rgba(32,255,181,0.12);}
+      to   { box-shadow: 0 10px 40px 0 rgba(32,255,181,0.22);}
+    }
+    .preloader-badge::after {
+      content: "";
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%,-50%);
+      width: 180%;
+      height: 240%;
+      border-radius: 50%;
+      background: radial-gradient(circle,rgba(56,255,176,0.12) 0%,rgba(40,150,130,0.02) 100%);
+      z-index: -1;
+      filter: blur(4px);
+      animation: wave 2.6s infinite linear;
+    }
+    @keyframes wave {
+      0% { opacity: .56; transform: translate(-50%,-50%) scale(0.95);}
+      60% { opacity: .22; }
+      100% { opacity: .56; transform: translate(-50%,-50%) scale(1.08);}
+    }
+    .bg-wave {
+      position: absolute;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.18;
+      background: none;
+      overflow: hidden;
+    }
+    .container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      animation: fadeIn 1.1s;
+      min-width: 320px;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.8s cubic-bezier(.46,.03,.52,.96), transform 0.8s cubic-bezier(.46,.03,.52,.96);
+    }
+    .container.loaded {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(18px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    .arbify-name {
+      font-size: 1.28rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: #38ffb0;
+      margin-bottom: 2px;
+      margin-top: -12px;
+      text-shadow: 0 2px 12px #20ffb54b;
+      text-align: center;
+      user-select: none;
+      display: inline-block;
+      padding: 12px 32px;
+      border-radius: 18px;
+      background: rgba(32, 255, 181, 0.11);
+      box-shadow: 0 4px 24px 0 rgba(32,255,181,0.09);
+      backdrop-filter: blur(7px);
+      -webkit-backdrop-filter: blur(7px);
+      border: 1.2px solid rgba(60,255,200,0.13);
+      transition: box-shadow 0.17s;
+    }
+    .arbify-name:hover {
+      box-shadow: 0 8px 32px 0 rgba(32,255,181,0.22);
+    }
+    .headline {
+      font-size: 2.15rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -1px;
+      text-align: center;
+      margin-bottom: 6px;
+      background: linear-gradient(92deg, #38ffb0 60%, #1cc1ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .desc {
+      color: #b2bbd2;
+      font-size: 1.13rem;
+      letter-spacing: 0.01em;
+      text-align: center;
+      max-width: 370px;
+      line-height: 1.7;
+      margin-bottom: 10px;
+      font-weight: 400;
+    }
+    .desc strong {
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.04em;
+    }
+    .btn {
+      padding: 15px 44px;
+      background: linear-gradient(91deg, #24e08b 80%, #19aff7 100%);
+      color: #101929;
+      border: none;
+      border-radius: 15px;
+      font-size: 1.13rem;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      cursor: pointer;
+      transition: background 0.16s, transform 0.15s, box-shadow 0.18s;
+      box-shadow: 0 2px 18px 0 rgba(36,224,139,0.08);
+      outline: none;
+      position: relative;
+    }
+    .btn:active {
+      transform: scale(0.97);
+    }
+    .btn:hover, .btn:focus {
+      background: linear-gradient(88deg, #19aff7 80%, #24e08b 100%);
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 6px 32px 0 rgba(36,224,139,0.10);
+    }
+    /* Shake animáció */
+    .btn.shake {
+      animation: shake 0.43s cubic-bezier(.38,0,.64,1) both;
+    }
+    @keyframes shake {
+      10%, 90% { transform: translateX(-2px);}
+      20%, 80% { transform: translateX(4px);}
+      30%, 50%, 70% { transform: translateX(-7px);}
+      40%, 60% { transform: translateX(7px);}
+    }
+    .warn-box {
+      margin-top: 18px;
+      margin-bottom: 6px;
+      background: rgba(255,255,255,0.08);
+      color: #ffe39f;
+      border-left: 4px solid #ffd66b;
+      border-radius: 10px;
+      padding: 11px 18px 11px 15px;
+      font-size: 1.04rem;
+      font-weight: 500;
+      box-shadow: 0 2px 12px 0 rgba(255,214,107,0.10);
+      text-align: center;
+      max-width: 370px;
+    }
+    .warn-box strong {
+      color: #fff7be;
+    }
+    .footer {
+      position: absolute;
+      left: 0; right: 0; bottom: 30px;
+      text-align: center;
+      color: #b2bbd2;
+      font-size: 1.04rem;
+      letter-spacing: 0.01em;
+      opacity: 0.84;
+      user-select: none;
+      pointer-events: none;
+    }
+    @media (max-width: 500px) {
+      .headline { font-size: 1.15rem;}
+      .arbify-name { font-size: 1rem; padding: 10px 18px;}
+      .desc { font-size: 0.98rem;}
+      .btn { padding: 13px 20px; font-size: 1rem;}
+      .warn-box { font-size: 0.96rem; padding: 9px 7px 9px 11px; max-width: 98vw;}
+      .footer { font-size: 0.92rem; bottom: 14px; }
+      .preloader-badge { font-size: 1.18rem; padding: 14px 28px;}
+    }
+  </style>
+</head>
+<body>
+  <!-- PRELOADER -->
+  <div class="preloader" id="preloader">
+    <div class="preloader-badge">Arbify</div>
+  </div>
+  <!-- SVG hullám/kör háttér -->
+  <div class="bg-wave">
+    <svg width="100%" height="100%">
+      <circle cx="75%" cy="20%" r="300" fill="#20ffb5" fill-opacity="0.11"/>
+      <circle cx="25%" cy="80%" r="210" fill="#18d5ff" fill-opacity="0.08"/>
+      <ellipse cx="54%" cy="60%" rx="340" ry="65" fill="#57ffb0" fill-opacity="0.05"/>
+      <ellipse cx="20%" cy="18%" rx="110" ry="50" fill="#fff" fill-opacity="0.04"/>
+    </svg>
+  </div>
+  <div class="container" id="main-content">
+    <div class="arbify-name">Arbify</div>
+    <div class="headline">Kockázatmentes fogadás</div>
+    <div class="desc">
+      Próbáld ki <strong>INGYEN</strong>, minden kötelezettség nélkül.
+    </div>
+    <a href="https://discord.gg/HFFrhey8eQ" target="_blank" style="text-decoration:none;">
+      <button class="btn" id="csatlakozom-btn">Belépek & kipróbálom</button>
+    </a>
+    <div class="warn-box">
+      Ha nem enged csatlakozni, <strong>nyisd meg a linket böngészőből</strong>, ne TikTok/Instagram appból!
+    </div>
+  </div>
+  <div class="footer">
+    Fedezd fel az arbitrázs fogadás világát 100% biztonsággal!
+  </div>
+  <script>
+    // Preloader eltüntetése, tartalom betöltése animációval
+    window.addEventListener('DOMContentLoaded', function() {
+      setTimeout(function() {
+        document.getElementById('preloader').classList.add('hide');
+        document.getElementById('main-content').classList.add('loaded');
+      }, 700); // rövidebb preloader
+    });
+
+    // Gomb "shake" animáció időközönként
+    setInterval(function() {
+      var btn = document.getElementById('csatlakozom-btn');
+      btn.classList.add('shake');
+      setTimeout(function(){ btn.classList.remove('shake'); }, 430);
+    }, 6500); // 6.5 másodpercenként rezeg
+
+  </script>
+</body>
+</html>
