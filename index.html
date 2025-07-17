@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Arbify • Kockázatmentes fogadás</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap" rel="stylesheet">
   <style>
     html, body {
@@ -51,7 +51,7 @@
       font-size: 2.1rem;
       font-weight: 600;
       color: #38ffb0;
-      letter-spacing: 0.07em;
+      letter-spacing: 0.14em;
       text-shadow: 0 2px 12px #20ffb54b;
       animation: pulse 1.2s infinite alternate;
       position: relative;
@@ -110,9 +110,9 @@
       to { opacity: 1; transform: translateY(0);}
     }
     .arbify-name {
-      font-size: 1.28rem;
+      font-size: 1.32rem;
       font-weight: 600;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.18em; /* nagyobb betűköz */
       color: #38ffb0;
       margin-bottom: 2px;
       margin-top: -12px;
@@ -120,7 +120,7 @@
       text-align: center;
       user-select: none;
       display: inline-block;
-      padding: 12px 32px;
+      padding: 13px 80px;
       border-radius: 18px;
       background: rgba(32, 255, 181, 0.11);
       box-shadow: 0 4px 24px 0 rgba(32,255,181,0.09);
@@ -133,7 +133,7 @@
       box-shadow: 0 8px 32px 0 rgba(32,255,181,0.22);
     }
     .headline {
-      font-size: 2.15rem;
+      font-size: 2.22rem;
       font-weight: 700;
       color: #fff;
       letter-spacing: -1px;
@@ -145,10 +145,10 @@
     }
     .desc {
       color: #b2bbd2;
-      font-size: 1.13rem;
+      font-size: 1.22rem;
       letter-spacing: 0.01em;
       text-align: center;
-      max-width: 370px;
+      max-width: 410px;
       line-height: 1.7;
       margin-bottom: 10px;
       font-weight: 400;
@@ -159,12 +159,12 @@
       letter-spacing: 0.04em;
     }
     .btn {
-      padding: 15px 44px;
+      padding: 18px 54px;
       background: linear-gradient(91deg, #24e08b 80%, #19aff7 100%);
       color: #101929;
       border: none;
       border-radius: 15px;
-      font-size: 1.13rem;
+      font-size: 1.32rem;
       font-weight: 600;
       letter-spacing: 0.07em;
       cursor: pointer;
@@ -192,41 +192,69 @@
       40%, 60% { transform: translateX(7px);}
     }
     .warn-box {
-      margin-top: 18px;
-      margin-bottom: 6px;
-      background: rgba(255,255,255,0.08);
+      margin-top: 20px;
+      margin-bottom: 8px;
+      background: rgba(255,255,255,0.11);
       color: #ffe39f;
       border-left: 4px solid #ffd66b;
-      border-radius: 10px;
-      padding: 11px 18px 11px 15px;
-      font-size: 1.04rem;
+      border-radius: 12px;
+      padding: 15px 22px 15px 17px;
+      font-size: 1.18rem;
       font-weight: 500;
       box-shadow: 0 2px 12px 0 rgba(255,214,107,0.10);
       text-align: center;
-      max-width: 370px;
+      max-width: 410px;
     }
     .warn-box strong {
       color: #fff7be;
     }
     .footer {
       position: absolute;
-      left: 0; right: 0; bottom: 30px;
+      left: 0; right: 0; bottom: 34px;
       text-align: center;
       color: #b2bbd2;
-      font-size: 1.04rem;
+      font-size: 1.13rem;
       letter-spacing: 0.01em;
       opacity: 0.84;
       user-select: none;
       pointer-events: none;
     }
-    @media (max-width: 500px) {
-      .headline { font-size: 1.15rem;}
-      .arbify-name { font-size: 1rem; padding: 10px 18px;}
-      .desc { font-size: 0.98rem;}
-      .btn { padding: 13px 20px; font-size: 1rem;}
-      .warn-box { font-size: 0.96rem; padding: 9px 7px 9px 11px; max-width: 98vw;}
-      .footer { font-size: 0.92rem; bottom: 14px; }
-      .preloader-badge { font-size: 1.18rem; padding: 14px 28px;}
+    @media (max-width: 540px) {
+      body { padding: 0 0px; }
+      .container {
+        min-width: unset;
+        gap: 25px;
+      }
+      .arbify-name {
+        font-size: 1.12rem;
+        padding: 10px 18vw;
+        letter-spacing: 0.23em;
+      }
+      .headline {
+        font-size: 1.48rem;
+      }
+      .desc {
+        font-size: 1.07rem;
+        max-width: 94vw;
+      }
+      .btn {
+        padding: 15px 9vw;
+        font-size: 1.12rem;
+      }
+      .warn-box {
+        font-size: 0.91rem;
+        padding: 9px 3vw 9px 3vw;
+        max-width: 90vw;
+      }
+      .footer {
+        font-size: 0.99rem;
+        bottom: 10px;
+        padding: 0 3vw;
+      }
+    }
+    @media (max-width: 370px) {
+      .headline { font-size: 1.04rem;}
+      .footer { font-size: 0.82rem;}
     }
   </style>
 </head>
@@ -258,7 +286,7 @@
     </div>
   </div>
   <div class="footer">
-    Fedezd fel az arbitrázs fogadás világát 100% biztonsággal!
+    Ha nem keresel pénzt 30 nap alatt, <strong>garantáltan visszautaljuk a pénzed!</strong>
   </div>
   <script>
     // Preloader eltüntetése, tartalom betöltése animációval
@@ -266,7 +294,7 @@
       setTimeout(function() {
         document.getElementById('preloader').classList.add('hide');
         document.getElementById('main-content').classList.add('loaded');
-      }, 700); // rövidebb preloader
+      }, 700);
     });
 
     // Gomb "shake" animáció időközönként
@@ -274,8 +302,7 @@
       var btn = document.getElementById('csatlakozom-btn');
       btn.classList.add('shake');
       setTimeout(function(){ btn.classList.remove('shake'); }, 430);
-    }, 6500); // 6.5 másodpercenként rezeg
-
+    }, 6500);
   </script>
 </body>
 </html>
