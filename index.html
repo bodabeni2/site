@@ -20,6 +20,50 @@
       align-items: center;
       justify-content: center;
     }
+    /* --- In-app figyelmeztető sáv --- */
+    .inapp-banner {
+      position: fixed;
+      z-index: 999999;
+      top: 0; left: 0; right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(95deg, #ffe39f 90%, #ffd66b 100%);
+      color: #101929;
+      font-weight: 600;
+      font-size: 1.05rem;
+      box-shadow: 0 4px 18px 0 rgba(255,214,107,0.08);
+      padding: 14px 16px 10px 14px;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      animation: bannerDrop 0.55s cubic-bezier(.58,.01,.37,1.13);
+      gap: 13px;
+      letter-spacing: 0.04em;
+      opacity: 0.97;
+      user-select: none;
+    }
+    @keyframes bannerDrop {
+      from { transform: translateY(-80px); opacity: 0; }
+      to { transform: translateY(0); opacity: 0.97; }
+    }
+    .inapp-banner .arrow-up {
+      display: flex;
+      align-items: center;
+      margin-right: 3px;
+      margin-left: -2px;
+    }
+    .inapp-banner .dots {
+      font-weight: bold;
+      font-size: 1.25em;
+      margin: 0 5px;
+      vertical-align: middle;
+      letter-spacing: 0.2em;
+    }
+    @media (max-width: 540px) {
+      .inapp-banner { font-size: 0.97rem; padding: 10px 2vw 8px 3vw;}
+    }
+
+    /* --- Marad a többi stílusod --- */
     .preloader {
       position: fixed;
       z-index: 99999;
@@ -181,7 +225,6 @@
       transform: translateY(-2px) scale(1.04);
       box-shadow: 0 6px 32px 0 rgba(36,224,139,0.10);
     }
-    /* Shake animáció */
     .btn.shake {
       animation: shake 0.43s cubic-bezier(.38,0,.64,1) both;
     }
@@ -259,6 +302,21 @@
   </style>
 </head>
 <body>
+  <!-- IN-APP BANNER (rejtve by default) -->
+  <div id="inapp-banner" class="inapp-banner" style="display:none;">
+    <span class="arrow-up" style="font-size:1.3em;">
+      <!-- Egyszerű SVG nyíl -->
+      <svg width="20" height="22" viewBox="0 0 20 22" fill="none" style="margin-right:5px;">
+        <path d="M10 19V4.5" stroke="#ad8b12" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M4.6 10.5L10 4.5L15.4 10.5" stroke="#ad8b12" stroke-width="2.4" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span>
+      <span class="dots">...</span>
+      Koppints a fenti három pontra, majd válaszd a <b>„Megnyitás böngészőben”</b> lehetőséget!
+    </span>
+  </div>
+
   <!-- PRELOADER -->
   <div class="preloader" id="preloader">
     <div class="preloader-badge">Arbify</div>
@@ -289,6 +347,31 @@
     30 napos pénzvisszafizetési garancia: ha nem keresel pénzt, visszautaljuk a befizetésedet.
   </div>
   <script>
+    // IN-APP DETECTION
+    function isInAppBrowser() {
+      var ua = navigator.userAgent || '';
+      ua = ua.toLowerCase();
+      // Tiktok, Instagram, Messenger, Facebook
+      return (
+        ua.indexOf('tiktok') !== -1 ||
+        ua.indexOf('instagram') !== -1 ||
+        ua.indexOf('fbav') !== -1 || // Facebook App Version
+        ua.indexOf('fb_iab') !== -1 ||
+        ua.indexOf('fban') !== -1 || // Facebook
+        ua.indexOf('messenger') !== -1
+      );
+    }
+
+    // Mutassa a bannert, ha in-app
+    if(isInAppBrowser()) {
+      var banner = document.getElementById('inapp-banner');
+      if(banner) banner.style.display = 'flex';
+
+      // Extra: Kis eltolás, hogy ne takarja az oldalt
+      var mainContent = document.getElementById('main-content');
+      if(mainContent) mainContent.style.marginTop = '68px';
+    }
+
     // Preloader eltüntetése, tartalom betöltése animációval
     window.addEventListener('DOMContentLoaded', function() {
       setTimeout(function() {
