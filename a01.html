@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="hu">
 <head>
   <meta charset="UTF-8">
@@ -63,7 +63,7 @@
       .inapp-banner { font-size: 0.97rem; padding: 10px 2vw 8px 3vw;}
     }
 
-    /* --- Preloader és többi stílus --- */
+    /* --- Preloader --- */
     .preloader {
       position: fixed;
       z-index: 99999;
@@ -123,6 +123,8 @@
       60% { opacity: .22; }
       100% { opacity: .56; transform: translate(-50%,-50%) scale(1.08);}
     }
+
+    /* --- Háttér hullámok --- */
     .bg-wave {
       position: absolute;
       top: 0; left: 0; width: 100vw; height: 100vh;
@@ -132,6 +134,8 @@
       background: none;
       overflow: hidden;
     }
+
+    /* --- Tartalom --- */
     .container {
       position: relative;
       z-index: 1;
@@ -367,29 +371,20 @@
     <div class="desc">
       Próbáld ki <strong>INGYEN</strong>, minden kötelezettség nélkül.
     </div>
-    <a href="https://discord.com/invite/UJEDvcG2" target="_blank" style="text-decoration:none;">
+    <a href="https://discord.gg/HFFrhey8eQ" target="_blank" style="text-decoration:none;">
       <button class="btn" id="csatlakozom-btn">Belépek & kipróbálom</button>
     </a>
     <div class="warn-box">
       Ha nem enged csatlakozni, <strong>nyisd meg a linket böngészőből</strong>, ne TikTok/Instagram appból!
     </div>
   </div>
-
   <div class="footer"></div>
 
   <script>
-    /* --- Robusztus in-app detektálás --- */
+    /* --- In-app detektálás (bannerhez) --- */
     function isInAppBrowser() {
       var ua = (navigator.userAgent || "").toLowerCase();
-      var ref = (document.referrer || "").toLowerCase();
-
-      var socialInApp = /(instagram|fb_iab|fbav|fban|messenger|tiktok|line|pinterest|snapchat|twitter|micromessenger|wechat)/i.test(ua);
-      var androidWV = /; wv\)/i.test(ua) || (/version\/\d+.*chrome\/\d+.*mobile safari\/\d+/i.test(ua) && !/safari/i.test(ua));
-      var iOS = /(iphone|ipad|ipod)/i.test(ua);
-      var iOSWebViewHeuristic = iOS && !/safari/i.test(ua);
-      var socialRef = /(instagram|facebook|fb\.com|tiktok|twitter|x\.com|snapchat|pinterest|line|wechat)/i.test(ref);
-
-      return socialInApp || androidWV || iOSWebViewHeuristic || socialRef;
+      return /(instagram|fb_iab|fbav|fban|messenger|tiktok)/i.test(ua);
     }
 
     /* --- TELEFON trigger felismerése --- */
@@ -425,22 +420,9 @@
       pop.classList.remove("show");
       pop.setAttribute("aria-hidden","true");
     }
-    function bindPopupButtons() {
-      var openBtn = document.getElementById("iab-open");
-      var closeBtn = document.getElementById("iab-close");
-      if (openBtn) {
-        openBtn.addEventListener("click", function() {
-          try { window.open(location.href, "_blank"); } catch(e) {}
-          alert("Ha nem nyílik meg automatikusan külső böngészőben, használd a fenti három pontot és válaszd a „Megnyitás böngészőben” opciót.");
-        });
-      }
-      if (closeBtn) closeBtn.addEventListener("click", hidePopup);
-    }
+    document.getElementById("iab-close").addEventListener("click", hidePopup);
 
-    // --- Egyszeri megjelenítés egy munkameneten belül ---
-    var SEEN_KEY = "iab_prompt_seen";
-
-    // Általános in-app banner
+    /* --- In-app banner megjelenítése --- */
     (function() {
       if (isInAppBrowser()) {
         var banner = document.getElementById('inapp-banner');
@@ -450,22 +432,21 @@
       }
     })();
 
-    // TELEFON trigger logika
+    /* --- TELEFON logika: popup mindenhol, KIVÉVE Instagram in-app --- */
     (function() {
+      var SEEN_KEY = "iab_prompt_seen";
       if (sessionStorage.getItem(SEEN_KEY) === "1") return;
 
-      if (hasPhoneTrigger() && isInAppBrowser()) {
-        cleanUrl();           // azonnali URL tisztítás
-        showPopup();          // pop-up csak in-app-ben
-        bindPopupButtons();
-        sessionStorage.setItem(SEEN_KEY, "1");
-      } else if (hasPhoneTrigger()) {
-        cleanUrl();           // nem in-app: csak tisztít, popup nélkül
+      if (hasPhoneTrigger()) {
+        cleanUrl(); // URL azonnali tisztítás
+        if (!/instagram/i.test(navigator.userAgent || "")) {
+          showPopup(); // popup csak ha NEM Instagram in-app
+        }
         sessionStorage.setItem(SEEN_KEY, "1");
       }
     })();
 
-    // Preloader eltüntetése, tartalom betöltése animációval
+    /* --- Preloader eltüntetése + tartalom animáció --- */
     window.addEventListener('DOMContentLoaded', function() {
       setTimeout(function() {
         document.getElementById('preloader').classList.add('hide');
@@ -473,7 +454,7 @@
       }, 700);
     });
 
-    // Gomb "shake" animáció időközönként
+    /* --- Gomb "shake" animáció időközönként --- */
     setInterval(function() {
       var btn = document.getElementById('csatlakozom-btn');
       if (!btn) return;
