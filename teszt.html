@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Profit Naptár</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #0F1B2D;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 20px;
+      color: white;
+    }
+
+    .arbify-logo {
+      font-family: 'Inter', 'Montserrat', Arial, sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #00aaff;
+      letter-spacing: 0.13em;
+      text-shadow: 0 2px 16px #0080ff66, 0 0px 1px #001a26;
+      margin-bottom: 38px;
+      margin-top: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+    .arbify-logo .hu {
+      color: #19ff80;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .calendar-root {
+      max-width: 600px;
+      margin: 0 auto 40px;
+      background: #132238;
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .calendar-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .calendar-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: white;
+    }
+
+    .month-arrow {
+      background: transparent;
+      color: white;
+      font-size: 1.5rem;
+      border: none;
+      cursor: pointer;
+    }
+
+    .calendar-profit {
+      font-size: 1.2rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .profit-label-title {
+      color: white;
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+
+    .profit-value {
+      color: #74C69D;
+      font-weight: 700;
+      font-size: 1.4rem;
+      text-shadow: 0 0 10px #74C69D88;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+
+    .calendar-dayname {
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #7D8590;
+    }
+
+    .calendar-cell {
+      height: 80px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1rem;
+      background: #1B2A40;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 2px solid transparent;
+      padding: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .calendar-cell:hover {
+      transform: scale(1.03);
+      box-shadow: 0 6px 12px rgba(255, 255, 255, 0.12);
+    }
+
+    .calendar-cell .day-label {
+      font-size: 0.85rem;
+      opacity: 0.8;
+      margin-bottom: 4px;
+    }
+
+    .calendar-cell .profit-label {
+      font-size: 0.95rem;
+    }
+
+    .calendar-cell.positive {
+      background: #496b2e;
+      border-color: #88bb71;
+    }
+
+    .calendar-cell.negative {
+      background: #6e1414;
+      border-color: #6e1414;
+    }
+
+    .calendar-cell.empty {
+      background: transparent;
+      cursor: default;
+      border: none;
+    }
+
+    .accumulator-box {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #132238;
+      border-radius: 16px;
+      padding: 20px;
+      color: white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .accumulator-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .accumulator-row {
+      margin: 10px 0;
+    }
+
+    .accumulator-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+
+    .accumulator-bar-container {
+      background-color: #1f2b3e;
+      border-radius: 6px;
+      height: 8px;
+      width: 100%;
+      position: relative;
+    }
+
+    .accumulator-bar-fill {
+      background-color: #a076f9;
+      height: 100%;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <!-- LOGÓ -->
+  <div class="arbify-logo">
+    <span>Arbify<span class="hu"></span></span>
+  </div>
+
+  <div class="calendar-root">
+    <div class="calendar-head">
+      <div>
+        <button class="month-arrow" id="prevMonth" title="Előző hónap">&#8592;</button>
+        <span class="calendar-title" id="monthLabel"></span>
+        <button class="month-arrow" id="nextMonth" title="Következő hónap">&#8594;</button>
+      </div>
+      <div class="calendar-profit">
+        <span class="profit-label-title">Összes profit:</span>
+        <span id="totalProfit" class="profit-value">0 Ft</span>
+      </div>
+    </div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+  </div>
+
+  <div class="accumulator-box">
+    <div class="accumulator-header">
+      <span>Halmozott fogadások</span>
+      <span id="maxProfit">Max profit: 0 Ft</span>
+    </div>
+
+    <div class="accumulator-row">
+      <div class="accumulator-label">
+        <span>Élő fogadások</span>
+        <span id="liveBetsValue">0 Ft</span>
+      </div>
+      <div class="accumulator-bar-container">
+        <div class="accumulator-bar-fill" id="liveBetsBar" style="width: 0%; background-color: #a076f9;"></div>
+      </div>
+    </div>
+
+    <div class="accumulator-row">
+      <div class="accumulator-label">
+        <span>Előzetes fogadások</span>
+        <span id="upcomingBetsValue">0 Ft</span>
+      </div>
+      <div class="accumulator-bar-container">
+        <div class="accumulator-bar-fill" id="upcomingBetsBar" style="width: 0%; background-color: #a076f9;"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const months = ["Január", "Február", "Március", "Április", "Május", "Június", "Július", "Augusztus", "Szeptember", "Október", "November", "December"];
+    const daysShort = ["Hétfő", "Kedd", "Szerda", "Csütörtök", "Péntek", "Szombat", "Vasárnap"];
+
+      const profits = {
+      "2025-6": [
+        23900, 21100, 22400, null, 29300, 23500, 31800,
+        19700, 27500, 25500, 23800, 22200, null, 24200,
+        32600, 18300, 26400, null, 20900, 21900, 22700,
+        20100, 31800, 26300, 29200, 19600, null, 27300,
+        25100, 26300
+      ],
+      "2025-7": [
+        21900, null, 28200, 18800, null, 26100, 23800,
+        24800, 19200, null, 28900, 27600, 23100, 20700,
+        23400, 31000, 29900, 28400, 33100, 29200, 27600,
+        32700, null, 23400, 2300, 26300, 27100, 25000,
+        null, 30400,
+        23900, 22400, 21800, null, 24800
+      ],
+"2025-8": [
+  34300, 28700, 31100, null, 28400,
+  29900, 30500, 31200, 31800, 32100, 
+  32600, 32900, 32300, 31900, 32400,
+  36700, null, 35300, 34300, 36500,
+  35800, 37200, null, 36100, 37600,
+  null, 36800
+]
+    };
+
+    let currentMonth = "2025-6";
+
+    const prevBtn = document.getElementById("prevMonth");
+    const nextBtn = document.getElementById("nextMonth");
+    const monthLabel = document.getElementById("monthLabel");
+    const calendarGrid = document.getElementById("calendarGrid");
+    const totalProfitEl = document.getElementById("totalProfit");
+    const maxProfitEl = document.getElementById("maxProfit");
+    const liveBetsValue = document.getElementById("liveBetsValue");
+    const upcomingBetsValue = document.getElementById("upcomingBetsValue");
+    const liveBetsBar = document.getElementById("liveBetsBar");
+    const upcomingBetsBar = document.getElementById("upcomingBetsBar");
+
+    function renderCalendar(monthKey) {
+      calendarGrid.innerHTML = "";
+
+      for (const day of daysShort) {
+        const el = document.createElement('div');
+        el.className = 'calendar-dayname';
+        el.innerText = day;
+        calendarGrid.appendChild(el);
+      }
+
+      const [year, month] = monthKey.split('-').map(Number);
+      monthLabel.textContent = `${months[month - 1]} ${year}`;
+
+      const firstDay = (new Date(year, month - 1, 1).getDay() + 6) % 7;
+      const daysInMonth = new Date(year, month, 0).getDate();
+      const profitArr = profits[monthKey] || [];
+
+      for (let i = 0; i < firstDay; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'calendar-cell empty';
+        calendarGrid.appendChild(emptyCell);
+      }
+
+      let totalProfit = 0;
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const profit = profitArr[day - 1];
+        const cell = document.createElement('div');
+        cell.className = 'calendar-cell';
+
+        const dayLabel = `<div class="day-label">${day}.</div>`;
+        let profitLabel = '';
+
+        if (typeof profit === 'number') {
+          profitLabel = `<div class="profit-label">${profit.toLocaleString()}&nbsp;Ft</div>`;
+          cell.classList.add(profit >= 0 ? 'positive' : 'negative');
+          totalProfit += profit;
+        } else {
+          cell.classList.add('empty');
+        }
+
+        cell.innerHTML = dayLabel + profitLabel;
+
+        cell.onclick = () => {
+          const input = prompt(`Add meg a(z) ${day}. napi profitot:`, profit ?? "");
+          if (input !== null && !isNaN(input) && input !== "") {
+            if (!profits[monthKey]) profits[monthKey] = [];
+            profits[monthKey][day - 1] = parseFloat(input);
+            renderCalendar(monthKey);
+          }
+        }
+
+        calendarGrid.appendChild(cell);
+      }
+
+      totalProfitEl.textContent = `${totalProfit >= 0 ? '+' : '-'}${Math.abs(totalProfit).toLocaleString()} Ft`;
+
+      // Szinkronizálás az alsó szekcióval
+      // Szinkronizálás az alsó szekcióval
+      maxProfitEl.textContent = `Max profit: ${totalProfit.toLocaleString()} Ft`;
+
+      let live;
+      if (monthKey === "2025-6") {
+        live = Math.round(totalProfit * 0.12 * 0.9); // június: -10%
+      } else if (monthKey === "2025-7") {
+        live = Math.round(totalProfit * 0.12); // július: alap 12%
+      } else if (monthKey === "2025-8") {
+        live = Math.round(totalProfit * 0.12 * 0.85); // augusztus: -15%
+      } else {
+        live = Math.round(totalProfit * 0.12); // minden más hónap: alap 12%
+      }
+
+      const upcoming = totalProfit - live;
+
+      liveBetsValue.textContent = `${live.toLocaleString()} Ft`;
+      upcomingBetsValue.textContent = `${upcoming.toLocaleString()} Ft`;
+      liveBetsBar.style.width = `${(live / totalProfit) * 100}%`;
+      upcomingBetsBar.style.width = `${(upcoming / totalProfit) * 100}%`;
+
+    }
+
+    prevBtn.onclick = () => {
+      const [y, m] = currentMonth.split('-').map(Number);
+      const prevDate = new Date(y, m - 2);
+      currentMonth = `${prevDate.getFullYear()}-${prevDate.getMonth() + 1}`;
+      renderCalendar(currentMonth);
+    };
+
+    nextBtn.onclick = () => {
+      const [y, m] = currentMonth.split('-').map(Number);
+      const nextDate = new Date(y, m);
+      currentMonth = `${nextDate.getFullYear()}-${nextDate.getMonth() + 1}`;
+      renderCalendar(currentMonth);
+    };
+
+    renderCalendar(currentMonth);
+  </script>
+</body>
+</html>
